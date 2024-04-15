@@ -2,7 +2,6 @@
 
 namespace Modules\Permission\App\Models;
 
-use Kyslik\ColumnSortable\Sortable;
 use Modules\Core\App\Exceptions\ModelCannotBeDeletedException;
 use Modules\Core\App\Traits\HasCache;
 use Spatie\Activitylog\LogOptions;
@@ -11,20 +10,13 @@ use Spatie\Permission\Models\Role as SpatieRole;
 
 class Role extends SpatieRole
 {
-    use Sortable, LogsActivity, HasCache;
+    use  LogsActivity, HasCache;
     const SUPER_ADMIN = 'super_admin';
 
     protected $fillable = [
         'name',
         'label',
         'guard_name'
-    ];
-
-    public array $sortable = [
-        'id',
-        'name',
-        'label',
-        'created_at',
     ];
 
     public function getActivitylogOptions(): LogOptions

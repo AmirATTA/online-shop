@@ -5,6 +5,7 @@ namespace Modules\Permission\App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Modules\Permission\App\Http\Requests\Admin\RoleStoreRequest;
@@ -29,72 +30,53 @@ class RoleController extends Controller
             ->get();
     }
 
-    public function index(): Renderable
+    public function index(): JsonResponse
     {
         $roles = Role::query()
-            ->sortable()
             ->latest('id')
             ->select(['id', 'name', 'label', 'created_at'])
             ->paginate();
 
-        return view('permission::admin.role.index', compact('roles'));
+        return response()->success('',compact('roles'));
     }
-
-    public function create(): Renderable
-    {
-        $permissions = $this->permissions();
-
-        return view('permission::admin.role.create', compact('permissions'));
-    }
-
-    public function store(RoleStoreRequest $request): RedirectResponse
+    
+    public function store(RoleStoreRequest $request): JsonResponse
     {
         $role = Role::query()->create([
             'name' => $request->input('name'),
             'label' => $request->input('label'),
-            'guard_name' => 'admin'
+            'guard_name' => 'admin-api'
         ]);
-
+        
         $permissions = $request->input('permissions');
         if ($permissions) {
             foreach ($permissions as $permission) {
                 $role->givePermissionTo($permission);
             }
         }
-
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'نقش با موفقیت ثبت شد.');
+        
+        return response()->success('نقش با موفقیت ثبت شد.');
     }
-
-    public function edit(Role $role): Renderable
-    {
-        $permissions = $this->permissions();
-
-        return view('permission::admin.role.edit', compact('permissions', 'role'));
-    }
-
-    public function update(RoleUpdateRequest $request, Role $role): RedirectResponse
+    
+    
+    public function update(RoleUpdateRequest $request, Role $role): JsonResponse
     {
         $role->update($request->only(['name', 'label']));
-
+        
         $permissions = $request->input('permissions');
         $role->syncPermissions($permissions);
-
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'نقش با موفقیت به روزرسانی شد.');
+        
+        return response()->success('نقش با موفقیت به روزرسانی شد.');
     }
-
-    public function destroy(Role $role): RedirectResponse
+    
+    public function destroy(Role $role): JsonResponse
     {
         $permissions = $role->permissions;
-
         if ($role->delete()) {
             foreach ($permissions as $permission) {
                 $role->revokePermissionTo($permission);
             }
         }
-
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'نقش با موفقیت حذف شد.');
+        return response()->success('نقش با موفقیت حذف شد.');
     }
 }

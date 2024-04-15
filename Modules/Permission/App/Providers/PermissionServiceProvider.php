@@ -5,6 +5,8 @@ namespace Modules\Permission\App\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Modules\Permission\App\Providers\RouteServiceProvider;
+
 
 class PermissionServiceProvider extends ServiceProvider
 {
