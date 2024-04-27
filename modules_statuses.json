@@ -1,0 +1,9 @@
+{
+    "Core": true,
+    "Area": true,
+    "Permission": true,
+    "Customer": true,
+    "Lost": true,
+    "Admin": true,
+    "Best": true
+}
